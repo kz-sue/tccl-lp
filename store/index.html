@@ -1,80 +1,131 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex">
-  <title>アプリをダウンロード | TaskChute Cloud Lite</title>
-  <script>
-    // 端末に応じて各ストアへ振り分ける。QRコードの遷移先として使用。
-    // TODO: 公開後に各ストアの URL を設定する
-    var APP_STORE_URL = '';
-    var GOOGLE_PLAY_URL = '';
-    (function () {
-      var ua = navigator.userAgent;
-      var isIOS = /iPhone|iPad|iPod/.test(ua) ||
-        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-      var isAndroid = /Android/.test(ua);
-      if (isIOS && APP_STORE_URL) {
-        location.replace(APP_STORE_URL);
-      } else if (isAndroid && GOOGLE_PLAY_URL) {
-        location.replace(GOOGLE_PLAY_URL);
-      }
-    })();
-  </script>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-      line-height: 1.8;
-      color: #333;
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 48px 16px 64px;
-      text-align: center;
-    }
-    .app-icon {
-      width: 88px;
-      height: 88px;
-      border-radius: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      display: block;
-      margin: 0 auto 16px;
-    }
-    h1 {
-      font-size: 1.5rem;
-      margin: 0 0 8px;
-    }
-    .store-links {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 24px;
-    }
-    .store-links img {
-      height: 48px;
-      width: auto;
-      display: block;
-    }
-    .back {
-      margin-top: 40px;
-      font-size: 0.9rem;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>TaskChute Cloud Lite をダウンロード</title>
+<link rel="icon" href="/assets/icon.png" type="image/png">
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
+    text-align: center; line-height: 1.6; padding: 24px; box-sizing: border-box;
+  }
+  .wrap { max-width: 360px; }
+  .app-icon {
+    width: 72px; height: 72px; border-radius: 16px; display: block; margin: 0 auto 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  h1 { font-size: 18px; margin: 0 0 8px; }
+  p { font-size: 14px; margin: 0 0 24px; opacity: .75; }
+  .links { display: flex; flex-direction: column; gap: 12px; }
+  .links a {
+    display: block; padding: 12px 16px; border-radius: 10px; text-decoration: none;
+    border: 1px solid currentColor; color: inherit; font-size: 15px;
+  }
+</style>
 </head>
 <body>
-  <img class="app-icon" src="/assets/icon.png" alt="" width="88" height="88">
+<div class="wrap">
+  <img class="app-icon" src="/assets/icon.png" alt="" width="72" height="72">
   <h1>TaskChute Cloud Lite</h1>
-  <p>お使いの端末のストアからダウンロードできます。</p>
-  <div class="store-links" id="store-links">
-    <!-- TODO: 各ストアのバッジ HTML に差し替える -->
-    <a id="link-appstore" href="#">App Store</a>
-    <a id="link-googleplay" href="#">Google Play</a>
+  <p id="msg">ストアに移動しています…</p>
+  <!-- JavaScriptが動かない場合・自動で移動しない場合の予備リンク -->
+  <div class="links">
+    <a id="link-ios" href="https://apps.apple.com/jp/app/id6806254121">App Store で開く</a>
+    <a id="link-android" href="https://play.google.com/store/apps/details?id=jp.zoelab.taskchutecloudlite">Google Play で開く</a>
   </div>
-  <script>
-    if (APP_STORE_URL) document.getElementById('link-appstore').href = APP_STORE_URL;
-    if (GOOGLE_PLAY_URL) document.getElementById('link-googleplay').href = GOOGLE_PLAY_URL;
-  </script>
-  <p class="back"><a href="/">トップページへ戻る</a></p>
+</div>
+
+<script>
+(function () {
+  // ===== 設定（ここだけ編集） ==========================================
+  var CONFIG = {
+    appleId: "6806254121",
+    androidPackage: "jp.zoelab.taskchutecloudlite",
+
+    // App Store Connect のキャンペーンリンク用 provider token（pt）。
+    // App Store Connect > App Analytics > 「キャンペーン」でリンクを生成すると URL 内に pt=XXXX が出ます。
+    // 空のままでも転送はできますが、App Analytics のキャンペーン別集計には出ません。
+    appleProviderToken: "",
+
+    // GA4 の測定ID（例: "G-XXXXXXXXXX"）。空なら計測なしで即転送。
+    ga4MeasurementId: "",
+
+    // PC など判別できない端末の戻り先（LPのダウンロード欄）
+    fallbackUrl: "https://tccl.zoelab.jp/#download",
+
+    // 流入元の既定値（URLに ?src=xxx があればそちらを優先）
+    defaultSource: "qr",
+    campaign: "launch"
+  };
+  // ====================================================================
+
+  // 流入元を取得（Apple の ct は40文字まで。英数字・_・- のみに整形）
+  var params = new URLSearchParams(location.search);
+  var src = (params.get("src") || CONFIG.defaultSource)
+    .toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 40) || CONFIG.defaultSource;
+
+  // 端末判定（iPadOS 13以降は「Mac」を名乗るため、タッチ対応で判別）
+  var ua = navigator.userAgent || "";
+  var isAndroid = /Android/i.test(ua);
+  var isIOS = /iPhone|iPad|iPod/i.test(ua) ||
+              (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+  var platform = isAndroid ? "android" : isIOS ? "ios" : "other";
+
+  // App Store（キャンペーンリンク形式）
+  var iosUrl = "https://apps.apple.com/jp/app/id" + CONFIG.appleId +
+    "?ct=" + encodeURIComponent(src) + "&mt=8" +
+    (CONFIG.appleProviderToken ? "&pt=" + encodeURIComponent(CONFIG.appleProviderToken) : "");
+
+  // Google Play（referrer に UTM を入れる。値全体を1回エンコード）
+  var referrer = "utm_source=lp&utm_medium=" + src + "&utm_campaign=" + CONFIG.campaign;
+  var androidUrl = "https://play.google.com/store/apps/details?id=" + CONFIG.androidPackage +
+    "&referrer=" + encodeURIComponent(referrer);
+
+  // 予備リンクにも同じパラメータを反映
+  document.getElementById("link-ios").href = iosUrl;
+  document.getElementById("link-android").href = androidUrl;
+
+  var target = platform === "ios" ? iosUrl :
+               platform === "android" ? androidUrl :
+               CONFIG.fallbackUrl;
+
+  if (platform === "other") {
+    document.getElementById("msg").textContent = "スマートフォンでQRコードを読み取るか、下のボタンからストアを開いてください。";
+  }
+
+  // 転送（二重実行防止つき）
+  var done = false;
+  function go() {
+    if (done) return;
+    done = true;
+    location.replace(target);
+  }
+
+  // GA4 計測 → 送信完了 or 600ms で転送
+  if (CONFIG.ga4MeasurementId) {
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { dataLayer.push(arguments); };
+    gtag("js", new Date());
+    gtag("config", CONFIG.ga4MeasurementId, { send_page_view: false });
+    gtag("event", "store_redirect", {
+      platform: platform,
+      source: src,
+      transport_type: "beacon",
+      event_callback: go
+    });
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "https://www.googletagmanager.com/gtag/js?id=" + CONFIG.ga4MeasurementId;
+    document.head.appendChild(s);
+    setTimeout(go, 600);
+  } else {
+    go();
+  }
+})();
+</script>
 </body>
 </html>

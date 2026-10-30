@@ -75,33 +75,25 @@
     .store-links {
       display: flex;
       justify-content: center;
-      gap: 12px;
+      align-items: center;
+      gap: 8px;
       flex-wrap: wrap;
       margin-top: 32px;
     }
     .store-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 16px;
-      min-width: 150px;
-      border: 1px solid #bbb;
-      border-radius: 8px;
-      color: #999;
-      background: #f7f7f7;
-      text-align: left;
-      line-height: 1.25;
-      cursor: default;
-    }
-    .store-badge .store-label {
       display: block;
-      font-size: 0.65rem;
+      line-height: 0;
     }
-    .store-badge .store-name {
+    .store-badge img {
       display: block;
-      font-size: 1rem;
-      font-weight: bold;
-      white-space: nowrap;
+      width: auto;
+    }
+    /* Apple のバッジは余白なし、Google Play のバッジは画像内に余白があるため、見た目の高さを揃える */
+    .store-badge-appstore img {
+      height: 48px;
+    }
+    .store-badge-googleplay img {
+      height: 58px;
     }
 
     /* Content */
@@ -174,16 +166,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
     }
-    .download .download-badges a {
-      display: block;
-      line-height: 0;
-    }
-    .download .download-badges img {
+    .download .download-badges .store-badge-appstore img {
       height: 56px;
-      width: auto;
-      display: block;
+    }
+    .download .download-badges .store-badge-googleplay img {
+      height: 68px;
     }
     .download .download-qr {
       display: none;
@@ -240,11 +229,6 @@
       margin: 0;
       justify-content: flex-end;
     }
-    footer .store-badge {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.35);
-      color: rgba(255, 255, 255, 0.75);
-    }
     footer .copyright {
       width: 100%;
       text-align: right;
@@ -277,8 +261,8 @@
     <p class="catch">タスクシュート式の時間記録を、もっと手軽に。</p>
     <p class="developer">開発: ZOELAB</p>
     <div class="store-links">
-      <span class="store-badge"><span><span class="store-label">近日公開</span><span class="store-name">App Store</span></span></span>
-      <span class="store-badge"><span><span class="store-label">近日公開</span><span class="store-name">Google Play</span></span></span>
+      <a class="store-badge store-badge-appstore" href="https://apps.apple.com/jp/app/id6806254121?ct=lp&amp;mt=8" target="_blank" rel="noopener"><img src="/assets/badge_appstore_ja.svg" alt="App Storeからダウンロード" width="109" height="40"></a>
+      <a class="store-badge store-badge-googleplay" href="https://play.google.com/store/apps/details?id=jp.zoelab.taskchutecloudlite&amp;referrer=utm_source%3Dlp%26utm_medium%3Dbadge%26utm_campaign%3Dlaunch" target="_blank" rel="noopener"><img src="/assets/badge_googleplay_ja.png" alt="Google Playで手に入れよう" width="646" height="250"></a>
     </div>
   </header>
 
@@ -356,9 +340,8 @@
     <div class="section-body">
       <div class="download">
         <div class="download-badges">
-          <!-- TODO: 各ストアのバッジ HTML に差し替える -->
-          <a href="/store/">App Store</a>
-          <a href="/store/">Google Play</a>
+          <a class="store-badge store-badge-appstore" href="https://apps.apple.com/jp/app/id6806254121?ct=lp&amp;mt=8" target="_blank" rel="noopener"><img src="/assets/badge_appstore_ja.svg" alt="App Storeからダウンロード" width="109" height="40"></a>
+          <a class="store-badge store-badge-googleplay" href="https://play.google.com/store/apps/details?id=jp.zoelab.taskchutecloudlite&amp;referrer=utm_source%3Dlp%26utm_medium%3Dbadge%26utm_campaign%3Dlaunch" target="_blank" rel="noopener"><img src="/assets/badge_googleplay_ja.png" alt="Google Playで手に入れよう" width="646" height="250"></a>
         </div>
         <div class="download-qr">
           <img src="/assets/qr_store.svg" alt="ダウンロード用QRコード" width="140" height="140">
@@ -387,8 +370,8 @@
         <li><a href="/account-deletion/">アカウントの削除</a></li>
       </ul>
       <div class="store-links">
-        <span class="store-badge"><span><span class="store-label">近日公開</span><span class="store-name">App Store</span></span></span>
-        <span class="store-badge"><span><span class="store-label">近日公開</span><span class="store-name">Google Play</span></span></span>
+        <a class="store-badge store-badge-appstore" href="https://apps.apple.com/jp/app/id6806254121?ct=lp&amp;mt=8" target="_blank" rel="noopener"><img src="/assets/badge_appstore_ja.svg" alt="App Storeからダウンロード" width="109" height="40"></a>
+        <a class="store-badge store-badge-googleplay" href="https://play.google.com/store/apps/details?id=jp.zoelab.taskchutecloudlite&amp;referrer=utm_source%3Dlp%26utm_medium%3Dbadge%26utm_campaign%3Dlaunch" target="_blank" rel="noopener"><img src="/assets/badge_googleplay_ja.png" alt="Google Playで手に入れよう" width="646" height="250"></a>
       </div>
       <p class="copyright">&copy; 2026 <a href="https://zoelab.jp/">ZOELAB</a></p>
     </div>
