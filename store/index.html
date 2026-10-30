@@ -135,8 +135,8 @@
     gtag("js", new Date());
     gtag("config", CONFIG.ga4MeasurementId, { send_page_view: false });
     gtag("event", "store_redirect", {
-      platform: platform,
-      source: src,
+      target_store: platform,  // ios / android / other
+      link_source: src,        // qr_lp / flyer など ?src= の値
       transport_type: "beacon",
       event_callback: go
     });
