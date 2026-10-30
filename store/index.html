@@ -105,10 +105,33 @@
     location.replace(target);
   }
 
+  // Cookie 同意。EEA・英国・スイス（タイムゾーンで簡易判定）では、
+  // LP の同意バナーで「同意する」が選択済み（localStorage）の場合のみ計測する。
+  var needsConsent = (function () {
+    try {
+      var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      return /^Europe\//.test(tz) || /^Atlantic\/(Reykjavik|Canary|Madeira|Azores|Faroe|Faeroe)$/.test(tz);
+    } catch (e) { return false; }
+  })();
+  var consentGranted = false;
+  try { consentGranted = localStorage.getItem("tccl_consent") === "granted"; } catch (e) {}
+  var analyticsAllowed = !needsConsent || consentGranted;
+
   // GA4 計測 → 送信完了 or 600ms で転送
-  if (CONFIG.ga4MeasurementId) {
+  if (CONFIG.ga4MeasurementId && analyticsAllowed) {
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { dataLayer.push(arguments); };
+    // 同意モードの初期値（Google 側の地域判定による保険。広告系は常に拒否）
+    gtag("consent", "default", {
+      ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied",
+      analytics_storage: consentGranted ? "granted" : "denied",
+      region: ["AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT",
+               "LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE","IS","LI","NO","GB","CH"]
+    });
+    gtag("consent", "default", {
+      ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied",
+      analytics_storage: "granted"
+    });
     gtag("js", new Date());
     gtag("config", CONFIG.ga4MeasurementId, { send_page_view: false });
     gtag("event", "store_redirect", {
