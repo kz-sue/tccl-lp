@@ -161,6 +161,54 @@
       padding-left: 1.6em;
     }
 
+    /* Download */
+    .download {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px 48px;
+      flex-wrap: wrap;
+      padding: 24px 0 8px;
+    }
+    .download .download-badges {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .download .download-badges a {
+      display: block;
+      line-height: 0;
+    }
+    .download .download-badges img {
+      height: 56px;
+      width: auto;
+      display: block;
+    }
+    .download .download-qr {
+      display: none;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #777;
+      line-height: 1.5;
+    }
+    .download .download-qr img {
+      display: block;
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 8px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    /* PC（マウス操作の端末）のみ QR コードを表示 */
+    @media (hover: hover) and (pointer: fine) and (min-width: 768px) {
+      .download .download-qr {
+        display: block;
+      }
+    }
+
     /* Footer */
     footer {
       background: #2c4a6d;
@@ -302,6 +350,21 @@
       <p class="note">
         ※「実装予定」の機能は開発中のものであり、内容・提供条件は変更される場合があります。
       </p>
+    </div>
+
+    <h2 id="download">ダウンロード</h2>
+    <div class="section-body">
+      <div class="download">
+        <div class="download-badges">
+          <!-- TODO: 各ストアのバッジ HTML に差し替える -->
+          <a href="/store/">App Store</a>
+          <a href="/store/">Google Play</a>
+        </div>
+        <div class="download-qr">
+          <img src="/assets/qr_store.svg" alt="ダウンロード用QRコード" width="140" height="140">
+          スマートフォンで読み取ると<br>お使いの端末のストアが開きます
+        </div>
+      </div>
     </div>
 
     <h2>サポート・各種情報</h2>

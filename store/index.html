@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>アプリをダウンロード | TaskChute Cloud Lite</title>
+  <script>
+    // 端末に応じて各ストアへ振り分ける。QRコードの遷移先として使用。
+    // TODO: 公開後に各ストアの URL を設定する
+    var APP_STORE_URL = '';
+    var GOOGLE_PLAY_URL = '';
+    (function () {
+      var ua = navigator.userAgent;
+      var isIOS = /iPhone|iPad|iPod/.test(ua) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      var isAndroid = /Android/.test(ua);
+      if (isIOS && APP_STORE_URL) {
+        location.replace(APP_STORE_URL);
+      } else if (isAndroid && GOOGLE_PLAY_URL) {
+        location.replace(GOOGLE_PLAY_URL);
+      }
+    })();
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+      line-height: 1.8;
+      color: #333;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 16px 64px;
+      text-align: center;
+    }
+    .app-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      display: block;
+      margin: 0 auto 16px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin: 0 0 8px;
+    }
+    .store-links {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    .store-links img {
+      height: 48px;
+      width: auto;
+      display: block;
+    }
+    .back {
+      margin-top: 40px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <img class="app-icon" src="/assets/icon.png" alt="" width="88" height="88">
+  <h1>TaskChute Cloud Lite</h1>
+  <p>お使いの端末のストアからダウンロードできます。</p>
+  <div class="store-links" id="store-links">
+    <!-- TODO: 各ストアのバッジ HTML に差し替える -->
+    <a id="link-appstore" href="#">App Store</a>
+    <a id="link-googleplay" href="#">Google Play</a>
+  </div>
+  <script>
+    if (APP_STORE_URL) document.getElementById('link-appstore').href = APP_STORE_URL;
+    if (GOOGLE_PLAY_URL) document.getElementById('link-googleplay').href = GOOGLE_PLAY_URL;
+  </script>
+  <p class="back"><a href="/">トップページへ戻る</a></p>
+</body>
+</html>
