@@ -52,14 +52,16 @@
       line-height: 1.2;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: baseline;
       flex-wrap: wrap;
       gap: 0 0.35em;
     }
     .hero h1 .lite {
+      /* 画像下端が「Lite」の文字ベースラインなので baseline 揃えにする */
       height: 1.2em;
       width: auto;
-      vertical-align: middle;
+      position: relative;
+      top: 0.06em;
     }
     .hero .catch {
       font-size: 1.05rem;
